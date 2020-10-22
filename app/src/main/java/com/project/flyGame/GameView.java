@@ -20,10 +20,10 @@ import java.util.Random;
 
 public class GameView extends SurfaceView implements Runnable {
 
+    public static float screenRatioX, screenRatioY;
     private Thread thread;
     private boolean isPlaying, isGameOver = false;
     private int screenX, screenY, score = 0;
-    public static float screenRatioX, screenRatioY;
     private Paint paint;
     private Bird[] birds;
     private SharedPreferences prefs;
@@ -61,11 +61,11 @@ public class GameView extends SurfaceView implements Runnable {
 
         this.screenX = screenX;
         this.screenY = screenY;
-        screenRatioX = 1980f / screenX;
-        screenRatioY = 1024f / screenY;
+        screenRatioX = (float) 0.8;
+        screenRatioY = (float) 0.8;
 
-        background1 = new Background(screenX, screenY, getResources());
-        background2 = new Background(screenX, screenY, getResources());
+        background1 = new Background(screenX, screenY, getResources(), R.drawable.background);
+        background2 = new Background(screenX, screenY, getResources(), R.drawable.background);
 
         flight = new Flight(this, screenY, getResources());
 
@@ -79,7 +79,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         birds = new Bird[4];
 
-        for (int i = 0;i < 4;i++) {
+        for (int i = 0; i < 4; i++) {
 
             Bird bird = new Bird(getResources());
             birds[i] = bird;
@@ -95,15 +95,15 @@ public class GameView extends SurfaceView implements Runnable {
 
         while (isPlaying) {
 
-            update ();
-            draw ();
-            sleep ();
+            update();
+            draw();
+            sleep();
 
         }
 
     }
 
-    private void update () {
+    private void update() {
 
         background1.x -= 10 * screenRatioX;
         background2.x -= 10 * screenRatioX;
@@ -117,9 +117,9 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         if (flight.isGoingUp)
-            flight.y -= 30 * screenRatioY;
+            flight.y -= (6 * screenY / 100) * screenRatioY;
         else
-            flight.y += 30 * screenRatioY;
+            flight.y += (6 * screenY / 100) * screenRatioY;
 
         if (flight.y < 0)
             flight.y = 0;
@@ -166,7 +166,7 @@ public class GameView extends SurfaceView implements Runnable {
                     return;
                 }
 
-                int bound = (int) (30 * screenRatioX);
+                int bound = (int) ((3 * screenX / 100) * screenRatioX);
                 bird.speed = random.nextInt(bound);
 
                 if (bird.speed < 10 * screenRatioX)
@@ -188,7 +188,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
 
-    private void draw () {
+    private void draw() {
 
         if (getHolder().getSurface().isValid()) {
 
@@ -196,8 +196,10 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
             canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
-            for (Bird bird : birds)
+
+            for (Bird bird : birds) {
                 canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
+            }
 
             canvas.drawText(score + "", screenX / 2f, 164, paint);
 
@@ -206,7 +208,7 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawBitmap(flight.getDead(), flight.x, flight.y, paint);
                 getHolder().unlockCanvasAndPost(canvas);
                 saveIfHighScore();
-                waitBeforeExiting ();
+                waitBeforeExiting();
                 return;
             }
 
@@ -243,7 +245,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
 
-    private void sleep () {
+    private void sleep() {
         try {
             Thread.sleep(17);
         } catch (InterruptedException e) {
@@ -251,7 +253,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    public void resume () {
+    public void resume() {
 
         isPlaying = true;
         thread = new Thread(this);
@@ -259,7 +261,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     }
 
-    public void pause () {
+    public void pause() {
 
         try {
             isPlaying = false;
@@ -281,10 +283,10 @@ public class GameView extends SurfaceView implements Runnable {
                 break;
             case MotionEvent.ACTION_UP:
                 flight.isGoingUp = false;
-                if (event.getX() > screenX / 2)
-                    flight.toShoot++;
+                flight.toShoot = 0;
                 break;
         }
+        flight.toShoot++;
 
         return true;
     }

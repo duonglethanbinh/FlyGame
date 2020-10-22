@@ -8,7 +8,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/background"
+        android:src="@drawable/background1"
         android:scaleType="centerCrop"/>
 
     <TextView
@@ -18,20 +18,21 @@
         android:layout_below="@id/highScoreTxt"
         android:layout_centerHorizontal="true"
         android:fontFamily="cursive"
-        android:text="I Have To Fly"
+        android:text="Don't miss a bird!"
         android:textAlignment="center"
         android:textColor="#ffffff"
-        android:textSize="48sp" />
+        android:textSize="45sp" />
 
-    <TextView
+    <Button
         android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:fontFamily="cursive"
+        android:background="?android:attr/selectableItemBackground"
         android:text="Play"
         android:textColor="#FF0000"
-        android:textSize="64sp" />
+        android:textSize="60sp" />
 
     <TextView
         android:id="@+id/highScoreTxt"
